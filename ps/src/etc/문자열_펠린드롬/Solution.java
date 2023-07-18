@@ -1,71 +1,48 @@
 package etc.문자열_펠린드롬;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
-
 public class Solution {
+    private final StringBuilder sb = new StringBuilder();
+    private static char[] characters = {
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+    };
 
-    private static char[] characters;
-
-    public Set<String> solve(int l, int n) throws Exception {
-        characters = new char[n];
-        for (int index = 0; index < n; index++) {
-            characters[index] = input.getString().charAt(0);
-        }
-
-        Set<String> set = new HashSet<>();
+    public void pelindrome(int l, int n) {
+        validate(l, n);
         int length = (l % 2 == 0 ? l / 2 : l / 2 + 1);
-        for (int index = 0; index < characters.length; index++) {
-            dfs(length, "", set);
+
+        int alphaCount = 0;
+        while (length > 0) {
+            length--;
+            if (alphaCount >= n) {
+                sb.append(characters[0]);
+            } else {
+                sb.append(characters[alphaCount]);
+                alphaCount++;
+            }
         }
-        return set;
+
+        String temp = sb.toString();
+        int end = l % 2 == 0 ? temp.length() - 1 : temp.length() - 2;
+        for (int index = end; index >= 0; index--) {
+            sb.append(temp.charAt(index));
+        }
+        System.out.println(sb);
     }
 
-    void dfs(int length, String character, Set<String> set) {
-        if (character.length() == length && character.length() % 2 != 0) {
-            StringBuilder characterBuilder = new StringBuilder(character);
-            for (int index = length - 2; index >= 0; index--) {
-                characterBuilder.append(characterBuilder.charAt(index));
+    private void validate(int l, int n) {
+        if (l % 2 == 0) {
+            if (n > (l / 2)) {
+                throw new IllegalArgumentException("만들 수 없는 조합입니다.");
             }
-            set.add(characterBuilder.toString());
-            return;
-        }
-        if (character.length() == length) {
-            StringBuilder characterBuilder = new StringBuilder(character);
-            for (int index = length - 1; index >= 0; index--) {
-                characterBuilder.append(characterBuilder.charAt(index));
+        } else {
+            if (n > (l / 2 + 1)) {
+                throw new IllegalArgumentException("만들 수 없는 조합입니다.");
             }
-            set.add(characterBuilder.toString());
-            return;
-        }
-
-        for (int index = 0; index < characters.length; index++) {
-            dfs(length, character + characters[index], set);
-        }
-    }
-
-    static Input input = new Input();
-
-    static class Input {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer("");
-
-        public int getInteger() throws Exception {
-            if (!st.hasMoreElements()) st = new StringTokenizer(br.readLine());
-            return Integer.parseInt(st.nextToken());
-        }
-
-        public String getString() throws Exception {
-            if (!st.hasMoreElements()) st = new StringTokenizer(br.readLine());
-            return st.nextToken();
         }
     }
 
     public static void main(String[] args) throws Exception {
         Solution solution = new Solution();
-        System.out.println(solution.solve(5, 2));
+        solution.pelindrome(100_000_000, 6);
     }
 }
