@@ -1,47 +1,46 @@
 package programmers.다리를_지나는_트럭;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
+import java.util.Objects;
+import java.util.Queue;
 
 public class Solution {
 
-    public static void main(String[] args) throws Exception {
-        Solution solution = new Solution();
-        int bridge_length = 2;
-        int weight = 10;
-        int[] truck_weights = {7, 4, 5, 6};
-        System.out.println(solution.solution(bridge_length, weight, truck_weights));
-    }
+    private final Queue<Truck> waitingTrucks = new LinkedList<>();
+    private final List<Truck> trucksOnRoad = new ArrayList<>();
 
     public int solution(int bridge_length, int weight, int[] truck_weights) {
-        int totalTruckWeight = 0;
-        Stack<Truck> stack = new Stack<>();
-        for (int index = truck_weights.length - 1; index >= 0; index--) {
-            stack.push(new Truck(0, truck_weights[index]));
+        int time = 0;
+        int totalWeightOnRoadTrucks = 0;
+        for (Integer truckWeight : truck_weights) {
+            waitingTrucks.add(new Truck(0, truckWeight));
         }
 
-        List<Truck> trucksOnRoad = new ArrayList<>();
-        int time = 0;
-        while (!stack.isEmpty() || !trucksOnRoad.isEmpty()) {
+        while (!waitingTrucks.isEmpty() || !trucksOnRoad.isEmpty()) {
             time++;
             List<Truck> trucksCrossedBridge = new ArrayList<>();
-            for (Truck truck : trucksOnRoad) {
-                truck.time += 1;
-                if (truck.time >= bridge_length) {
-                    trucksCrossedBridge.add(truck);
-                    totalTruckWeight -= truck.weight;
+            for (Truck onRoadTruck : trucksOnRoad) {
+                onRoadTruck.time += 1;
+                if (onRoadTruck.time >= bridge_length) {
+                    trucksCrossedBridge.add(onRoadTruck);
+                    totalWeightOnRoadTrucks -= onRoadTruck.weight;
                 }
             }
             trucksOnRoad.removeAll(trucksCrossedBridge);
 
-            if (!stack.isEmpty() && totalTruckWeight + stack.peek().weight <= weight) {
-                Truck newTruck = stack.pop();
-                trucksOnRoad.add(newTruck);
-                totalTruckWeight += newTruck.weight;
+            if (canCrossBridge(weight, totalWeightOnRoadTrucks)) {
+                Truck truck = waitingTrucks.poll();
+                totalWeightOnRoadTrucks += truck.weight;
+                trucksOnRoad.add(truck);
             }
         }
         return time;
+    }
+
+    private boolean canCrossBridge(int weight, int totalTruckWeight) {
+        return !waitingTrucks.isEmpty() && totalTruckWeight + waitingTrucks.peek().weight <= weight;
     }
 
     static class Truck {
@@ -52,6 +51,23 @@ public class Solution {
         public Truck(int time, int weight) {
             this.time = time;
             this.weight = weight;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof Truck)) {
+                return false;
+            }
+            Truck truck = (Truck) o;
+            return time == truck.time && weight == truck.weight;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(time, weight);
         }
     }
 }
