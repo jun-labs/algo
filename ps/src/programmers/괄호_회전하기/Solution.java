@@ -7,11 +7,11 @@ class Solution {
     public int solution(String s) {
         int answer = 0;
         for (int index = 0; index < s.length(); index++) {
-            String movedStr = s.substring(1) + s.charAt(0);
-            if (isValidBracket(movedStr)) {
+            String temp = s.substring(1) + s.charAt(0);
+            if (isValidBracket(temp)) {
                 answer += 1;
             }
-            s = movedStr;
+            s = temp;
         }
         return answer;
     }
