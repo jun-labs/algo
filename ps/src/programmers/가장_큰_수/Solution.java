@@ -11,11 +11,14 @@ public class Solution {
         }
 
         Arrays.sort(array, (x, y) -> (y + x).compareTo(x + y));
+        StringBuilder sb = new StringBuilder();
+        for (String number : array) {
+            sb.append(number);
+        }
 
-        String answer = String.join("", array);
-        if (answer.charAt(0) == '0') {
+        if (sb.toString().charAt(0) == '0') {
             return "0";
         }
-        return answer;
+        return sb.toString();
     }
 }
