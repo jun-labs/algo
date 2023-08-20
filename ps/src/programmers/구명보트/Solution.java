@@ -12,7 +12,7 @@ public class Solution {
         int end = people.length - 1;
         while (start <= end) {
             answer++;
-            if (people[start] + people[end] <= limit) {
+            if (people[start] + people[end] < limit) {
                 start++;
             }
             end--;
