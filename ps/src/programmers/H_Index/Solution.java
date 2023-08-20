@@ -8,7 +8,6 @@ public class Solution {
         Arrays.sort(citations);
 
         int length = citations.length;
-
         int answer = 0;
         for (int index = 0; index < length; index++) {
             if (citations[index] >= length - index) {
