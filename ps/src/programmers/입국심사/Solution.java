@@ -5,16 +5,16 @@ import java.util.Arrays;
 public class Solution {
 
     public long solution(int n, int[] times) {
+        long answer = 0;
+
         Arrays.sort(times);
 
         long start = 0;
         long end = (long) times[times.length - 1] * n;
-        long mid = 0;
-        long answer = 0;
+        long mid = -1;
 
         while (start <= end) {
             mid = (start + end) / 2;
-
             long count = 0;
             for (int time : times) {
                 count += (mid / time);
