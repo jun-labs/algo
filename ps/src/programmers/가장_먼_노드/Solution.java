@@ -21,43 +21,37 @@ public class Solution {
             nodes[index] = new ArrayList();
         }
 
-        for (int[] node : edge) {
-            int from = node[0];
-            int to = node[1];
+        for (int[] eachEdge : edge) {
+            int from = eachEdge[0];
+            int to = eachEdge[1];
             nodes[from].add(to);
             nodes[to].add(from);
         }
 
-        visited[0] = true;
-        visited[1] = true;
         Queue<Integer> queue = new LinkedList<>();
         queue.add(1);
+        visited[1] = true;
 
         while (!queue.isEmpty()) {
-            int node = queue.poll();
-            List<Integer> linkedNodes = nodes[node];
+            Integer currentNode = queue.poll();
 
+            List<Integer> linkedNodes = nodes[currentNode];
             for (Integer linkedNode : linkedNodes) {
-                if (visited[linkedNode]) {
-                    continue;
+                if (!visited[linkedNode]) {
+                    visited[linkedNode] = true;
+                    queue.add(linkedNode);
+                    distances[linkedNode] = distances[currentNode] + 1;
                 }
-                queue.add(linkedNode);
-                visited[linkedNode] = true;
-                distances[linkedNode] = distances[node] + 1;
             }
         }
-
         Arrays.sort(distances);
-
         int max = distances[n];
-        int count = 0;
-        for (int index = n; index >= 1; index--) {
-            if (max == distances[index]) {
-                count++;
-            } else {
-                break;
+        int answer = 0;
+        for (int index = 1; index <= n; index++) {
+            if (distances[index] == max) {
+                answer++;
             }
         }
-        return count;
+        return answer;
     }
 }
