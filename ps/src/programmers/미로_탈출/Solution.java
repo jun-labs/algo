@@ -1,97 +1,92 @@
 package programmers.미로_탈출;
 
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Queue;
 
 public class Solution {
 
-    private String[][] map;
+    private String[][] maze;
+    private boolean[][] visited;
     private int[] dx = {1, -1, 0, 0};
     private int[] dy = {0, 0, 1, -1};
 
-    public static void main(String[] args) throws Exception {
-        String[] map = {"SOOOL", "XXXXO", "OOOOO", "OXXXX", "OOOOE"};
-        Solution solution = new Solution();
-        System.out.println(solution.solution(map));
-    }
-
     public int solution(String[] maps) {
-        map = new String[maps.length][maps[0].length()];
-        Point source = new Point(-1, -1);
-        Point lever = new Point(-1, -1);
-        Point target = new Point(-1, -1);
+        maze = new String[maps.length][maps[0].length()];
+        Point source = null;
+        Point target = null;
+        Point lever = null;
 
-        for (int x = 0; x < maps.length; x++) {
-            for (int y = 0; y < maps[0].length(); y++) {
-                map[x][y] = maps[x].split("")[y];
-                if (map[x][y].equals("S")) {
-                    source.x = x;
-                    source.y = y;
+        for (int row = 0; row < maps.length; row++) {
+            for (int col = 0; col < maps[0].length(); col++) {
+                maze[row][col] = maps[row].split("")[col];
+                if (maze[row][col].equals("S")) {
+                    source = new Point(row, col, 0);
                 }
-                if (map[x][y].equals("L")) {
-                    lever.x = x;
-                    lever.y = y;
+                if (maze[row][col].equals("L")) {
+                    lever = new Point(row, col, 0);
                 }
-                if (map[x][y].equals("E")) {
-                    target.x = x;
-                    target.y = y;
+                if (maze[row][col].equals("E")) {
+                    target = new Point(row, col, 0);
                 }
             }
         }
 
-        int distanceToLever = getDistance(source, lever);
+        int distanceToLever = move(source, lever);
         if (distanceToLever == -1) {
-            return -1;
+            return distanceToLever;
         }
 
-        int distanceToTarget = getDistance(
-            new Point(lever.x, lever.y, distanceToLever),
-            target
-        );
+        lever.count = distanceToLever;
+        int distanceToTarget = move(lever, target);
         if (distanceToTarget == -1) {
-            return -1;
+            return distanceToTarget;
         }
         return distanceToTarget;
     }
 
-    private int getDistance(Point source, Point target) {
-        boolean[][] visited = init();
+    private int move(Point source, Point target) {
+        visited = initVisited();
         visited[source.x][source.y] = true;
 
         Queue<Point> queue = new LinkedList<>();
         queue.add(source);
+
         while (!queue.isEmpty()) {
             Point point = queue.poll();
-            int x = point.x;
-            int y = point.y;
-            int count = point.count;
 
-            if (x == target.x && y == target.y) {
-                return count;
+            if (point.equals(target)) {
+                return point.count;
             }
 
             for (int direction = 0; direction < 4; direction++) {
-                int nextX = x + dx[direction];
-                int nextY = y + dy[direction];
-                if (moveable(nextX, nextY) && !visited[nextX][nextY]) {
-                    visited[nextX][nextY] = true;
-                    queue.add(new Point(nextX, nextY, count + 1));
+                int nextX = point.x + dx[direction];
+                int nextY = point.y + dy[direction];
+
+                if (!moveable(nextX, nextY)) {
+                    continue;
                 }
+                visited[nextX][nextY] = true;
+                queue.add(new Point(nextX, nextY, point.count + 1));
             }
         }
         return -1;
     }
 
     private boolean moveable(int x, int y) {
-        return x >= 0 && x < map.length && y >= 0 && y < map[0].length && !map[x][y].equals("X");
+        return (x >= 0 && x < maze.length) &&
+            (y >= 0 && y < maze[0].length) &&
+            (!(maze[x][y].equals("X"))) &&
+            (!visited[x][y]);
     }
 
-    private boolean[][] init() {
-        boolean[][] visited = new boolean[map.length][map[0].length];
-        for (int x = 0; x < map.length; x++) {
-            for (int y = 0; y < map[0].length; y++) {
-                if (map[x][y].equals("X")) {
-                    visited[x][y] = true;
+    private boolean[][] initVisited() {
+        boolean[][] visited = new boolean[maze.length][maze[0].length];
+
+        for (int row = 0; row < maze.length; row++) {
+            for (int col = 0; col < maze[0].length; col++) {
+                if (maze[row][col].equals("X")) {
+                    visited[row][col] = true;
                 }
             }
         }
@@ -104,15 +99,27 @@ public class Solution {
         int y;
         int count;
 
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
         public Point(int x, int y, int count) {
             this.x = x;
             this.y = y;
             this.count = count;
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (this == object) {
+                return true;
+            }
+            if (!(object instanceof Point)) {
+                return false;
+            }
+            Point point = (Point) object;
+            return x == point.x && y == point.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
         }
     }
 }
