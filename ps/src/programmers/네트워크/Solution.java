@@ -10,11 +10,11 @@ public class Solution {
         connection = computers;
         visited = new boolean[n];
 
-        for (int index = 0; index < n; index++) {
-            if (!visited[index]) {
-                visited[index] = true;
-                dfs(index);
-                answer++;
+        for (int node = 0; node < n; node++) {
+            if (!visited[node]) {
+                visited[node] = true;
+                dfs(node);
+                answer += 1;
             }
         }
         return answer;
@@ -23,7 +23,7 @@ public class Solution {
     private void dfs(int node) {
         for (int row = 0; row < connection.length; row++) {
             for (int col = 0; col < connection[0].length; col++) {
-                if (row != col && !visited[col] && connection[node][col] > 0) {
+                if (!visited[col] && connection[node][col] > 0) {
                     visited[col] = true;
                     dfs(col);
                 }
