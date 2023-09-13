@@ -16,12 +16,13 @@ public class Solution {
 
         while (n > 0) {
             Integer work = queue.poll();
-            if (work == 0) {
+            if (work >= 1) {
+                work -= 1;
+                queue.add(work);
+                n -= 1;
+            } else {
                 break;
             }
-            work -= 1;
-            queue.add(work);
-            n -= 1;
         }
 
         for (Integer work : queue) {
